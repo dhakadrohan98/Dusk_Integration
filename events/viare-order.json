@@ -1,0 +1,10 @@
+{
+    "name": "Viare Order",
+    "description": "Viare Order Create",
+    "delivery_type": "JOURNAL",
+    "runtime_action":"https://1287541-920azurerodent-praveen.adobeio-static.net/api/v1/web/duskappbuilder/viare-order",
+    "events_of_interest": [{
+        "provider_id": "2e024f61-59d6-4e80-9c2c-36358b78b1ae",
+        "event_code": "com.viare.ordercreate"
+    }]
+}

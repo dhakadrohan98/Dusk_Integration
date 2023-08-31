@@ -1,0 +1,480 @@
+application:
+  actions: actions
+  web: web-src
+  runtimeManifest:
+    packages:
+      duskappbuilder:
+        license: Apache-2.0
+        actions:
+          # generic:
+          #   function: actions/generic/index.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # search-loyalty-customer:
+          #   function: actions/futura/searchloyaltycustomer.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     FUTURA_CUSTOMER_API: $FUTURA_CUSTOMER_API
+          #     FUTURA_CF_ACCESS_CLIENT_ID: $FUTURA_CF_ACCESS_CLIENT_ID
+          #     FUTURA_CF_ACCESS_CLIENT_SECRET: $FUTURA_CF_ACCESS_CLIENT_SECRET
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # giftcard-balance:
+          #   function: actions/givex/giftcardbalance.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     DUSK_PORTAL_AUTH_TOKEN: $DUSK_PORTAL_AUTH_TOKEN
+          #     DUSK_PORTAL_API_URL: $DUSK_PORTAL_API_URL
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     GIVEX_ENDPOINT: $GIVEX_ENDPOINT
+          #     GIVEX_USERID: $GIVEX_USERID
+          #     GIVEX_PASSWORD: $GIVEX_PASSWORD
+          #     GIVEX_LANGUAGECODE: $GIVEX_LANGUAGECODE
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # giftcard-authorise:
+          #   function: actions/givex/giftcardauthorise.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     DUSK_PORTAL_AUTH_TOKEN: $DUSK_PORTAL_AUTH_TOKEN
+          #     DUSK_PORTAL_API_URL: $DUSK_PORTAL_API_URL
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     GIVEX_ENDPOINT: $GIVEX_ENDPOINT
+          #     GIVEX_USERID: $GIVEX_USERID
+          #     GIVEX_PASSWORD: $GIVEX_PASSWORD
+          #     GIVEX_LANGUAGECODE: $GIVEX_LANGUAGECODE
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # giftcard-release:
+          #   function: actions/givex/giftcardrelease.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     DUSK_PORTAL_AUTH_TOKEN: $DUSK_PORTAL_AUTH_TOKEN
+          #     DUSK_PORTAL_API_URL: $DUSK_PORTAL_API_URL
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     GIVEX_ENDPOINT: $GIVEX_ENDPOINT
+          #     GIVEX_USERID: $GIVEX_USERID
+          #     GIVEX_PASSWORD: $GIVEX_PASSWORD
+          #     GIVEX_LANGUAGECODE: $GIVEX_LANGUAGECODE
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # giftcard-redeem:
+          #   function: actions/givex/giftcard-redeem.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     DUSK_PORTAL_AUTH_TOKEN: $DUSK_PORTAL_AUTH_TOKEN
+          #     DUSK_PORTAL_API_URL: $DUSK_PORTAL_API_URL
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     GIVEX_ENDPOINT: $GIVEX_ENDPOINT
+          #     GIVEX_USERID: $GIVEX_USERID
+          #     GIVEX_PASSWORD: $GIVEX_PASSWORD
+          #     GIVEX_LANGUAGECODE: $GIVEX_LANGUAGECODE
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # giftcard-create:
+          #   function: actions/givex/giftcardcreate.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     DUSK_PORTAL_AUTH_TOKEN: $DUSK_PORTAL_AUTH_TOKEN
+          #     DUSK_PORTAL_API_URL: $DUSK_PORTAL_API_URL
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     GIVEX_ENDPOINT: $GIVEX_ENDPOINT
+          #     GIVEX_USERID: $GIVEX_USERID
+          #     GIVEX_PASSWORD: $GIVEX_PASSWORD
+          #     GIVEX_LANGUAGECODE: $GIVEX_LANGUAGECODE
+          #     GIVEX_GIFTCARD_CREATE_EVENTCODE: $GIVEX_GIFTCARD_CREATE_EVENTCODE
+          #     GIVEX_GIFTCARD_CREATE_PROVIDER_ID: $GIVEX_GIFTCARD_CREATE_PROVIDER_ID
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # points-loyaltymember:
+          #   function: actions/givex/loyaltymembepoints.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     DUSK_PORTAL_AUTH_TOKEN: $DUSK_PORTAL_AUTH_TOKEN
+          #     DUSK_PORTAL_API_URL: $DUSK_PORTAL_API_URL
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     GIVEX_ENDPOINT: $GIVEX_ENDPOINT
+          #     GIVEX_USERID: $GIVEX_USERID
+          #     GIVEX_PASSWORD: $GIVEX_PASSWORD
+          #     GIVEX_LANGUAGECODE: $GIVEX_LANGUAGECODE
+          #     GIVEX_LOYALTYPOINTS_PROVIDER_ID: $GIVEX_LOYALTYPOINTS_PROVIDER_ID
+          #     GIVEX_LOYALTYPOINTS_EVENTCODE: $GIVEX_LOYALTYPOINTS_EVENTCODE
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # renew-loyaltymember:
+          #   function: actions/givex/renewloyaltymember.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     DUSK_PORTAL_AUTH_TOKEN: $DUSK_PORTAL_AUTH_TOKEN
+          #     DUSK_PORTAL_API_URL: $DUSK_PORTAL_API_URL
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     ECOMMERCE_CUSTOMER_ENDPOINT: $ECOMMERCE_CUSTOMER_ENDPOINT
+          #     ECOMMERCE_ORDER_ENDPOINT: $ECOMMERCE_ORDER_ENDPOINT
+          #     FUTURA_CUSTOMER_API: $FUTURA_CUSTOMER_API
+          #     FUTURA_CF_ACCESS_CLIENT_ID: $FUTURA_CF_ACCESS_CLIENT_ID
+          #     FUTURA_CF_ACCESS_CLIENT_SECRET: $FUTURA_CF_ACCESS_CLIENT_SECRET
+          #     LOYALTY_MEMBERSHIP_TIME_YEAR: $LOYALTY_MEMBERSHIP_TIME_YEAR
+          #     DUSK_PORTAL_CREATE_UPDATE_MEMBER: $DUSK_PORTAL_CREATE_UPDATE_MEMBER
+          #     DUSK_PORTAL_RENEW_EXP_API: $DUSK_PORTAL_RENEW_EXP_API
+          #     SOAP_TIMEOUT: $SOAP_TIMEOUT
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true 
+          # update-loyaltymember-data:
+          #   function: actions/givex/updateloyaltydata.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     DUSK_PORTAL_AUTH_TOKEN: $DUSK_PORTAL_AUTH_TOKEN
+          #     DUSK_PORTAL_API_URL: $DUSK_PORTAL_API_URL
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     ECOMMERCE_CUSTOMER_ENDPOINT: $ECOMMERCE_CUSTOMER_ENDPOINT
+          #     ECOMMERCE_ORDER_ENDPOINT: $ECOMMERCE_ORDER_ENDPOINT
+          #     FUTURA_CUSTOMER_API: $FUTURA_CUSTOMER_API
+          #     FUTURA_CF_ACCESS_CLIENT_ID: $FUTURA_CF_ACCESS_CLIENT_ID
+          #     FUTURA_CF_ACCESS_CLIENT_SECRET: $FUTURA_CF_ACCESS_CLIENT_SECRET
+          #     LOYALTY_MEMBERSHIP_TIME_YEAR: $LOYALTY_MEMBERSHIP_TIME_YEAR
+          #     DUSK_PORTAL_CREATE_UPDATE_MEMBER: $DUSK_PORTAL_CREATE_UPDATE_MEMBER
+          #     SOAP_TIMEOUT: $SOAP_TIMEOUT
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # purchase-loyalty-membership:
+          #   function: actions/givex/purchaseloyalty.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     GIVEX_ENDPOINT: $GIVEX_ENDPOINT
+          #     GIVEX_USERID: $GIVEX_USERID
+          #     GIVEX_PASSWORD: $GIVEX_PASSWORD
+          #     GIVEX_LANGUAGECODE: $GIVEX_LANGUAGECODE
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     DUSK_PORTAL_AUTH_TOKEN: $DUSK_PORTAL_AUTH_TOKEN
+          #     DUSK_PORTAL_API_URL: $DUSK_PORTAL_API_URL
+          #     DUSK_PORTAL_RESERVE_CARD_ENDPOINT: $DUSK_PORTAL_RESERVE_CARD_ENDPOINT
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     SOAP_TIMEOUT: $SOAP_TIMEOUT
+          #     ECOMMERCE_ORDER_ENDPOINT: $ECOMMERCE_ORDER_ENDPOINT
+          #     GIVEX_PROVIDER_ID: $GIVEX_PROVIDER_ID
+          #     GIVEX_UPDATE_LOYALTY_DATA_CODE: $GIVEX_UPDATE_LOYALTY_DATA_CODE
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # click-collect:
+          #   function: actions/viare/clickandcollect.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     VIARE_CLICK_COLLECT_URL: $VIARE_CLICK_COLLECT_URL
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # viare-shipment-events:
+          #   function: actions/viare/shipment.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     VIARE_PRODUCT_API: $VIARE_PRODUCT_API
+          #     VIARE_USERNAME: $VIARE_USERNAME
+          #     VIARE_PASSWORD: $VIARE_PASSWORD
+          #     VIARE_ORDER_API: $VIARE_ORDER_API
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     ECOMMERCE_PRODUCT_ENDPOINT: $ECOMMERCE_PRODUCT_ENDPOINT
+          #     MAGENTO_MEDIA_URL: $MAGENTO_MEDIA_URL
+          #     SOAP_TIMEOUT: $SOAP_TIMEOUT
+          #     ECOMMERCE_ORDER_ENDPOINT: $ECOMMERCE_ORDER_ENDPOINT
+          #     ECOMMERCE_ORDER_COMMENT_ENDPOINT: $ECOMMERCE_ORDER_COMMENT_ENDPOINT
+          #     ECOMMERCE_ORDER_SHIP_ENDPOINT: $ECOMMERCE_ORDER_SHIP_ENDPOINT
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # viare-product-api:
+          #   function: actions/viare/products.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     VIARE_PRODUCT_API: $VIARE_PRODUCT_API
+          #     VIARE_USERNAME: $VIARE_USERNAME
+          #     VIARE_PASSWORD: $VIARE_PASSWORD
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     ECOMMERCE_PRODUCT_ENDPOINT: $ECOMMERCE_PRODUCT_ENDPOINT
+          #     MAGENTO_MEDIA_URL: $MAGENTO_MEDIA_URL
+          #     SOAP_TIMEOUT: $SOAP_TIMEOUT
+          #     ECOMMERCE_PRODUCT_ATTRIBUTE_OPTIONS_ENDPOINT: $ECOMMERCE_PRODUCT_ATTRIBUTE_OPTIONS_ENDPOINT
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # create-delivery-note:
+          #   function: actions/futura/deliverynote.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     ORG_ID: $ORG_ID
+          #     SERVICE_API_KEY: $SERVICE_API_KEY
+          #     SERVICE_SECRET: $SERVICE_SECRET
+          #     DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #     DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     FUTURA_CF_ACCESS_CLIENT_ID: $FUTURA_CF_ACCESS_CLIENT_ID
+          #     FUTURA_CF_ACCESS_CLIENT_SECRET: $FUTURA_CF_ACCESS_CLIENT_SECRET
+          #     SOAP_TIMEOUT: $SOAP_TIMEOUT
+          #     FUTURA_ORDER_API: $FUTURA_ORDER_API
+          #     ECOMMERCE_ORDER_ENDPOINT: $ECOMMERCE_ORDER_ENDPOINT
+          #     ECOMMERCE_SHIPMENT_ENDPOINT: $ECOMMERCE_SHIPMENT_ENDPOINT
+          #     FUTURA_ORDER_RANGE: $FUTURA_ORDER_RANGE
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          create-customer:
+            function: actions/futura/customer.js
+            web: 'yes'
+            runtime: nodejs:16
+            inputs:
+              LOG_LEVEL: debug
+              ORG_ID: $ORG_ID
+              SERVICE_API_KEY: $SERVICE_API_KEY
+              SERVICE_SECRET: $SERVICE_SECRET
+              DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+              DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+              ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+              ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+              ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+              ECOMMERCE_CUSTOMER_ENDPOINT: $ECOMMERCE_CUSTOMER_ENDPOINT
+              FUTURA_CUSTOMER_API: $FUTURA_CUSTOMER_API
+              FUTURA_CF_ACCESS_CLIENT_ID: $FUTURA_CF_ACCESS_CLIENT_ID
+              FUTURA_CF_ACCESS_CLIENT_SECRET: $FUTURA_CF_ACCESS_CLIENT_SECRET
+              SOAP_TIMEOUT: $SOAP_TIMEOUT
+            annotations:
+              require-adobe-auth: true
+              final: true
+          # logging-in-magento:
+          #   function: actions/logging/addlogs.js
+          #   web: 'yes'
+          #   runtime: nodejs:16
+          #   inputs:
+          #     LOG_LEVEL: debug
+          #     ECOMMERCE_LOGGING_ENDPOINT: $ECOMMERCE_LOGGING_ENDPOINT
+          #     ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #     TEMP_ECOMMERCE_AUTHORIZED_TOKEN: $TEMP_ECOMMERCE_AUTHORIZED_TOKEN
+          #     TEMP_ECOMMERCE_ENDPOINT: $TEMP_ECOMMERCE_ENDPOINT
+          #   annotations:
+          #     require-adobe-auth: true
+          #     final: true
+          # viare-order:
+          #     function: actions/viare/order.js
+          #     web: 'yes'
+          #     runtime: nodejs:16
+          #     inputs:
+          #       LOG_LEVEL: debug
+          #       VIARE_PRODUCT_API: $VIARE_PRODUCT_API
+          #       VIARE_USERNAME: $VIARE_USERNAME
+          #       VIARE_PASSWORD: $VIARE_PASSWORD
+          #       ORG_ID: $ORG_ID
+          #       SERVICE_API_KEY: $SERVICE_API_KEY
+          #       SERVICE_SECRET: $SERVICE_SECRET
+          #       ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #       ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #       ECOMMERCE_ENDPOINT: $ECOMMERCE_ENDPOINT
+          #       ECOMMERCE_STORE: $ECOMMERCE_STORE
+          #       ECOMMERCE_ORDER_ENDPOINT: $ECOMMERCE_ORDER_ENDPOINT
+          #       VIARE_ORDER_API: $VIARE_ORDER_API
+          #       FUTURA_CUSTOMER_API: $FUTURA_CUSTOMER_API
+          #       FUTURA_CF_ACCESS_CLIENT_ID: $FUTURA_CF_ACCESS_CLIENT_ID
+          #       FUTURA_CF_ACCESS_CLIENT_SECRET: $FUTURA_CF_ACCESS_CLIENT_SECRET
+          #       FUTURA_ORDER_API: $FUTURA_ORDER_API
+          #       ORDER_CREATE_EVENT_PROVIDER_ID: $ORDER_CREATE_EVENT_PROVIDER_ID
+          #       ORDER_CREATE_EVENT_CODE: $ORDER_CREATE_EVENT_CODE
+          #       DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #       DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #       VIARE_ORDER_SEARCH_API: $VIARE_ORDER_SEARCH_API
+          #       FUTURA_ORDER_RANGE: $FUTURA_ORDER_RANGE
+          #       VIARE_ORDER_CREATE_EVENT_CODE: $VIARE_ORDER_CREATE_EVENT_CODE
+          #       VIARE_ORDER_CREATE_PROVIDERCODE: $VIARE_ORDER_CREATE_PROVIDERCODE
+          #       SOAP_TIMEOUT: $SOAP_TIMEOUT
+          #       FUTURA_AUS_DELIVERY_BRANCH: $FUTURA_AUS_DELIVERY_BRANCH
+          #       FUTURA_NZL_DELIVERY_BRANCH: $FUTURA_NZL_DELIVERY_BRANCH
+          #       FUTURA_SHIPPING_SKU: $FUTURA_SHIPPING_SKU
+          #       FUTURA_AU_CODE: $FUTURA_AU_CODE
+          #       FUTURA_NZ_CODE: $FUTURA_NZ_CODE
+          #       GIVEX_GIFTCARD_CREATE_EVENTCODE: $GIVEX_GIFTCARD_CREATE_EVENTCODE
+          #       GIVEX_GIFTCARD_CREATE_PROVIDER_ID: $GIVEX_GIFTCARD_CREATE_PROVIDER_ID
+          #       GIVEX_PROVIDER_ID: $GIVEX_PROVIDER_ID
+          #       GIVEX_PURCHASE_LOYALTYMEMBER_CODE: $GIVEX_PURCHASE_LOYALTYMEMBER_CODE
+          #       GIVEX_RENEW_LOYALTYMEMBER_CODE: $GIVEX_RENEW_LOYALTYMEMBER_CODE
+          #       FUTURA_PURCHASE_LOYALTY_SKU: $FUTURA_PURCHASE_LOYALTY_SKU
+          #       FUTURA_RENEW_LOYALTY_SKU: $FUTURA_RENEW_LOYALTY_SKU
+          #       GIVEX_LOYALTYPOINTS_PROVIDER_ID: $GIVEX_LOYALTYPOINTS_PROVIDER_ID
+          #       GIVEX_LOYALTYPOINTS_EVENTCODE: $GIVEX_LOYALTYPOINTS_EVENTCODE
+          #     annotations:
+          #       require-adobe-auth: true
+          #       final: true
+          # registered-customer-place-order:
+          #     function: actions/order/registered-customer-place-order.js
+          #     web: 'yes'
+          #     runtime: nodejs:16
+          #     inputs:
+          #       LOG_LEVEL: debug
+          #       ORG_ID: $ORG_ID
+          #       SERVICE_API_KEY: $SERVICE_API_KEY
+          #       SERVICE_SECRET: $SERVICE_SECRET
+          #       ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #       ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #       ECOMMERCE_ENDPOINT: $ECOMMERCE_ENDPOINT
+          #       ECOMMERCE_STORE: $ECOMMERCE_STORE
+          #       ECOMMERCE_ORDER_ENDPOINT: $ECOMMERCE_ORDER_ENDPOINT
+          #       ECOMMERCE_CUSTOMER_ENDPOINT: $ECOMMERCE_CUSTOMER_ENDPOINT
+          #       FUTURA_CUSTOMER_API: $FUTURA_CUSTOMER_API
+          #       FUTURA_CF_ACCESS_CLIENT_ID: $FUTURA_CF_ACCESS_CLIENT_ID
+          #       FUTURA_CF_ACCESS_CLIENT_SECRET: $FUTURA_CF_ACCESS_CLIENT_SECRET
+          #       FUTURA_ORDER_API: $FUTURA_ORDER_API
+          #       DUSK_LOGGING_EVENT_CODE: $DUSK_LOGGING_EVENT_CODE
+          #       DUSK_MAGENTO_PROVIDER_ID: $DUSK_MAGENTO_PROVIDER_ID
+          #       VIARE_ORDER_CREATE_EVENT_CODE: $VIARE_ORDER_CREATE_EVENT_CODE
+          #       VIARE_ORDER_CREATE_PROVIDERCODE: $VIARE_ORDER_CREATE_PROVIDERCODE
+          #       VIARE_ORDER_SEARCH_API: $VIARE_ORDER_SEARCH_API
+          #     annotations:
+          #       require-adobe-auth: true
+          #       final: true
+          # create-rma:
+          #     function: actions/tcc/rma.js
+          #     web: 'yes'
+          #     runtime: nodejs:16
+          #     inputs:
+          #       LOG_LEVEL: debug
+          #       TCC_API_URL: $TCC_API_URL
+          #       TCC_USERNAME: $TCC_USERNAME
+          #       TCC_PASSWORD: $TCC_PASSWORD
+          #       TCC_ACCOUNT_ID: $TCC_ACCOUNT_ID
+          #       TCC_AUTHENTICATION: $TCC_AUTHENTICATION
+          #       TCC_ISN: $TCC_ISN
+          #       ECOMMERCE_AUTHORIZED_TOKEN: $ECOMMERCE_AUTHORIZED_TOKEN
+          #       ECOMMERCE_API_URL: $ECOMMERCE_API_URL
+          #       ECOMMERCE_CUSTOMER_ENDPOINT: $ECOMMERCE_CUSTOMER_ENDPOINT
+          #       ECOMMERCE_RETURNS_ENDPOINT: $ECOMMERCE_RETURNS_ENDPOINT
+          #       ECOMMERCE_ORDER_ENDPOINT: $ECOMMERCE_ORDER_ENDPOINT
+          #     annotations:
+          #         require-adobe-auth: true
+          #         final: true
+          # publish-events:
+          #     function: actions/publish-events/index.js
+          #     web: 'yes'
+          #     runtime: nodejs:16
+          #     inputs:
+          #       LOG_LEVEL: debug
+          #       apiKey: $SERVICE_API_KEY
+          #     annotations:
+          #       require-adobe-auth: true
+          #       final: true
+          

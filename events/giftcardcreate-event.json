@@ -1,0 +1,12 @@
+{
+    "name": "Create giftcard",
+    "description": "Giftcard Create",
+    "delivery_type": "JOURNAL",
+    "runtime_action": "https://1287541-920azurerodent-praveen.adobeio-static.net/api/v1/web/duskappbuilder/giftcard-create",
+    "events_of_interest": [
+        {
+            "provider_id": "86e117ba-2ea2-4b5d-851f-69e04ef93729",
+            "event_code": "com.givex.giftcardcreate"
+        }
+    ]
+}
