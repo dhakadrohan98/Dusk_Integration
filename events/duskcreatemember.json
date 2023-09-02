@@ -1,0 +1,10 @@
+{
+  "name": "Dusk APP",
+  "description": "Event Provider for Dusk",
+  "delivery_type": "JOURNAL",
+  "runtime_action":"https://1287541-920azurerodent-praveen.adobeio-static.net/api/v1/web/duskappbuilder/generic",
+  "events_of_interest": [{
+    "provider_id": "708dd4f5-55b8-48c7-be1a-c88344d1e772",
+    "event_code": "com.adobe.duskcreatecustomer"
+  }]
+}

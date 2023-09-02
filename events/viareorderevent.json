@@ -1,0 +1,10 @@
+{
+    "name": "Viare order event data",
+    "description": "Viare Order Event",
+    "delivery_type": "JOURNAL",
+    "runtime_action":"https://1287541-920azurerodent-stage.adobeio-static.net/api/v1/web/duskappbuilder/generic",
+    "events_of_interest": [{
+      "provider_id": "386105e0-59c5-4a12-af71-7e4d38eb03a3",
+      "event_code": "com.viare.orderevent"
+    }]
+ }
