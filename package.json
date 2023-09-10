@@ -9,7 +9,7 @@
     "@spectrum-icons/workflow": "^3.2.0",
     "cloudevents": "^4.0.2",
     "core-js": "^3.6.4",
-    "davexmlrpc": "^0.4.25",
+    "davexmlrpc": "^0.4.26",
     "jsonfile": "^6.1.0",
     "node-cache": "^5.1.2",
     "node-fetch": "^2.6.0",
