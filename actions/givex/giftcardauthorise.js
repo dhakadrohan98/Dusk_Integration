@@ -19,57 +19,74 @@ const { Core } = require('@adobe/aio-sdk')
 const { errorResponse, getBearerToken, stringParameters, checkMissingRequestInputs } = require('../utils')
 const { payloadForPostAuthAmount, payloadForPreAuthAmount, call } = require('../givex')
 const xmlrpc = require("davexmlrpc");
-// main function that will be executed by Adobe I/O Runtime
+// Main function that will be executed by Adobe I/O Runtime
 async function main(params) {
-  // create a Logger
+  // Create a Logger
   const logger = Core.Logger('main', { level: params.LOG_LEVEL || 'info' })
 
-  try {
-
-    // --- 
-
+  try { 
+    // To store response for Logging module
     let responseData = {};
 
+    // Setting response for Logging module
     responseData["event_code"] = (params.type) ? params.type : 'com.givex.authorisegiftcard';
     responseData["provider_id"] = params.source;
     responseData["event_id"] = params.event_id;
     responseData["entity"] = "Redeem a Gift Card";
 
-    var generated_card_response = {}
-    var amount = 0;
+    var amount = 0; // To store GiftCard amount
 
     // 'info' is the default level if not set
     logger.info('Calling the main action')
 
-    // log parameters, only if params.LOG_LEVEL === 'debug'
+    // Log parameters, only if params.LOG_LEVEL === 'debug'
     logger.debug(stringParameters(params))
 
-    // check for missing request input parameters and headers
+    // Check for missing request input parameters and headers
     const requiredParams = [/* add required params */]
     const requiredHeaders = []
+
+    // Check for any missing parameters
     const errorMessage = checkMissingRequestInputs(params, requiredParams, requiredHeaders)
+    
+    // If we get parameters missing then will log the error and return
     if (errorMessage) {
-      // return and log client errors
+
+      // Return and log client errors
       return errorResponse(400, errorMessage, logger)
+
     }
 
-    // extract the user Bearer token from the Authorization header
+    // Extract the user Bearer token from the Authorization header
     const token = getBearerToken(params)
-    var preAuthResponse = []
-    var all_response = []
 
+    // To store response for this API
+    var preAuthResponse = []
+    
+    // Check if we have data in params with amount and card number and we have card number having some positive value
     if ((params.data) && (params.data.value) && (params.data.value.amount) && (params.data.value.cardno) && (params.data.value.cardno.length > 0)) 
     {
-      var amount = parseFloat(params.data.value.amount)
-      var cardno = params.data.value.cardno
+      // Creating Response for the API after verifying valid payload
+    
+      var amount = parseFloat(params.data.value.amount)  // To store Gift Card amount
+      var cardno = params.data.value.cardno  // To store Gift Card number
 
       for (let index = 0; index < cardno.length; index++) {
         var givexNumber = cardno[index]
+        
+        // Generating Payload for Pre Auth Action of Givex (dc_920)
         var payloadPreAuth = payloadForPreAuthAmount(params, givexNumber, amount)
+
+        // Execute the givex API with generated payload for Pre Auth action.
         var preAuthResult = await call(params, 'dc_920', payloadPreAuth)
         
+        // API response if executed successfully with status 0 (true)
         if ((preAuthResult) && (preAuthResult[1] == 0)) {
+
+          // After success call of authorise API, setting pre auth result response
           var authorise_amount = parseFloat(preAuthResult[3])
+
+          // setting amount after deductions for captured amount
           amount = parseFloat(amount) - parseFloat(authorise_amount)
           preAuthResponse.push(
             {
@@ -79,6 +96,8 @@ async function main(params) {
             }
           )
         } else {
+
+          // Setting pre auth result response with the authorise amount as zero and error message as API returned status false
           preAuthResponse.push(
             {
               "cardno": givexNumber,
@@ -90,21 +109,26 @@ async function main(params) {
 
       }
     } else {
+
+      // when we don't have correct parameter or card number , setting response to false
       preAuthResponse = false;
     }
 
+    // setting response with status code
     const response = {
       statusCode: 200,
       body: preAuthResponse
     }
 
-    // log the response status code
+    // Log the response status code
     logger.info(`${response.statusCode}: successful request`)
     return response
   } catch (error) {
-    // log any server errors
+    
+    // Log any server errors
     logger.error(error)
-    // return with 500
+    
+    // return with 500 status code
     return errorResponse(500, 'server error ' + error, logger)
   }
 }

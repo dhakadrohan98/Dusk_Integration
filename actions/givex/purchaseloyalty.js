@@ -61,7 +61,16 @@ async function main(params) {
     customerdata['email'] = magentoOrder.customer_email
     customerdata['dob'] = magentoOrder.customer_dob ? magentoOrder.customer_dob.substring(0,10) : ""
 
-    var reservationcard, reservationresponse={};
+      // Checking if we get first name and last name in Order object then using the same
+    if (typeof magentoOrder.customer_firstname !== "undefined") {
+        customerdata.firstname = magentoOrder.customer_firstname
+    }
+      if (typeof magentoOrder.customer_lastname !== "undefined") {
+          customerdata.lastname = magentoOrder.customer_lastname
+      }
+
+
+      var reservationcard, reservationresponse={};
     reservationresponse['action'] = "Get Blank Loyalty Card";
     try{
         reservationcard = await ReserveLoyaltyCard(params);

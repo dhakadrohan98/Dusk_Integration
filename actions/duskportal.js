@@ -1,4 +1,5 @@
 const axios = require('axios')
+const { getdateasstring } = require('./utils')
 
 /**
  * Reserves a loyalty card through the Dusk Portal API using the provided parameters.
@@ -38,17 +39,36 @@ async function ReserveLoyaltyCard(params) {
     }
 }
 
-function duskportalCustomerPayload(params, futuracustomer, customerId)
+function duskportalCustomerPayload(params, futuracustomer, customerId, givexdata)
 {
-    var data = params.data.value;
+    var dob,enrollment,signup,renew;
+    if (futuracustomer.address.web_ans_sachgeburtstag == undefined || getdateasstring(futuracustomer.address.web_ans_sachgeburtstag) == 18991230) {
+        dob = 0
+    } else {
+        dob = getdateasstring(futuracustomer.address.web_ans_sachgeburtstag)
+    }
+    if (futuracustomer.comon.web_add_wf_date_time_1 == undefined || getdateasstring(futuracustomer.comon.web_add_wf_date_time_1) == 18991230) {
+        enrollment = 0
+    } else {
+        enrollment = getdateasstring(futuracustomer.comon.web_add_wf_date_time_1)
+    }
+    if (futuracustomer.comon.web_add_ulog_date_time == undefined || getdateasstring(futuracustomer.comon.web_add_ulog_date_time) == 18991230) {
+        signup = 0
+    } else {
+        signup = getdateasstring(futuracustomer.comon.web_add_ulog_date_time)
+    }
+    if (futuracustomer.comon.web_add_wf_date_time_2 == undefined || getdateasstring(futuracustomer.comon.web_add_wf_date_time_2) == 18991230) {
+        renew = 0
+    } else {
+        renew = getdateasstring(futuracustomer.comon.web_add_wf_date_time_2)
+    }
 
-    return {
-        "Futura_Number": data.futura_id,
+    var duskportalpayload = {
+        "Futura_Number": givexdata.futura_id,
         "Futura_Name": futuracustomer.customer.web_kde_index,
         "Card_Type": "",
-        "Card_No": data.card_no,
-        "ISO_Serial": data.givex[6],
-        "Givex_No": data.givex[2],
+        "Card_No": givexdata.card_no,
+        "Givex_No": givexdata.givex_id,
         "Magento_No": customerId,
         "Expiry_Date": getdateasstring(futuracustomer.comon.web_add_sperrdatum),
         "Expiry_Text": "dusk Rewards Expiry Date",
@@ -61,11 +81,17 @@ function duskportalCustomerPayload(params, futuracustomer, customerId)
         "Postcode": futuracustomer.address.web_ans_plz,
         "State": futuracustomer.address.web_ans_county,
         "Mobile": futuracustomer.address.web_ans_telefon,
-        "Birthdate": getdateasstring(futuracustomer.address.web_ans_sachgeburtstag),
-        "Enrolment_Date": getdateasstring(futuracustomer.comon.web_add_wf_date_time_1),
-        "Signup_Date": getdateasstring(futuracustomer.comon.web_add_ulog_date_time),
-        "Renew_Date": getdateasstring(futuracustomer.comon.web_add_wf_date_time_2)
+        "Birthdate": dob,
+        "Enrolment_Date": enrollment,
+        "Signup_Date": signup,
+        "Renew_Date": renew
     }
+
+    if(givexdata.card_iso != undefined){
+        duskportalpayload.ISO_Serial = givexdata.card_iso
+    }
+
+    return duskportalpayload
 
 }
 
@@ -140,23 +166,12 @@ async function SendCustomerData(params, payload){
     }
 }
 
-function getdateasstring(Isodate)
-{
-    var date = new Date(Isodate);
-    var year = date.toLocaleString("default", { year: "numeric" });
-    var month = date.toLocaleString("default", { month: "2-digit" });
-    var day = date.toLocaleString("default", { day: "2-digit" });
-
-    // Generate yyyy-mm-dd date string
-    var formattedDate = year + month + day;
-
-    return formattedDate
-}
 
 
 //noinspection JSAnnotator
 module.exports = {
     ReserveLoyaltyCard,
+    getdateasstring,
     duskportalCustomerPayload,
     SendCustomerData,
     duskportalrenewCustomerPayload,

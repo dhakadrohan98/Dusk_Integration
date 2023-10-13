@@ -369,7 +369,14 @@ async function main(params) {
     } catch (error) {
         // log any server errors
         // return with 500
-        return errorResponse(error.statusCode, 'Server Error: ' + ((error.message) ? (error.message) : error.error), logger)
+        const error_response = {
+            statusCode: 200,
+            body: {                
+                "Error": error.message
+            }
+        }
+        //return errorResponse(error.statusCode, 'Server Error: ' + ((error.message) ? (error.message) : error.error), logger)
+        return error_response
     }
 }
 

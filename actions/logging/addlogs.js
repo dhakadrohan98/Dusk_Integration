@@ -25,11 +25,11 @@ async function main (params) {
 
   // create a Logger
   const logger = Core.Logger('main', { level: params.LOG_LEVEL || 'info' })
-  const apiUrl = params.TEMP_ECOMMERCE_ENDPOINT+params.ECOMMERCE_LOGGING_ENDPOINT;
+  const apiUrl = params.ECOMMERCE_API_URL+params.ECOMMERCE_LOGGING_ENDPOINT;
 
   const headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer '+params.TEMP_ECOMMERCE_AUTHORIZED_TOKEN
+    'Authorization': 'Bearer '+params.ECOMMERCE_AUTHORIZED_TOKEN
   };
 
   try {
@@ -52,8 +52,29 @@ async function main (params) {
     // extract the user Bearer token from the Authorization header
     const token = getBearerToken(params)
 
+    // Create Param for logging request
+
+    var loggingparam = {}
+
+    // if(params.data.id){
+    //     loggingparam['id'] = params.data.id;
+    // }
+
+    loggingparam["event_id"] = params.data.event_id
+    loggingparam["provider_id"] = params.data.provider_id
+    loggingparam["event_code"] = params.data.event_code
+    loggingparam["entity"] = params.data.entity
+    if(typeof  params.data.params != "undefined") {
+      loggingparam["params"] = params.data.params
+    }
+    if(typeof  params.data.params.api_id != "undefined") {
+      loggingparam["api_id"] = params.data.params.api_id
+    }
+    loggingparam["request"]= params.data
+
+
     
-    var logResponse = await callPostApi(apiUrl, headers, {'data': params.data});
+    var logResponse = await callPostApi(apiUrl, headers, {"log": loggingparam});
 
     /*const response = {
       statusCode: 200,
@@ -76,15 +97,21 @@ async function main (params) {
 }
 
 async function callPostApi(apiUrl, headers, payload) {
-  try {
-    const response = await axios.post(apiUrl, payload, {
-      headers: headers,
-    });
 
-    return {'status': response.status, 'data': response.data};
-  } catch (error) {
-    console.error('Error:', error.message);
-    return {'status': false, 'data': error.message};
+  var config = {
+    method: 'post',
+    url: apiUrl.replace(/\\\//g, "/"),
+    headers: headers,
+    data : JSON.stringify(payload)
+  };
+
+  try{
+      var response = await axios(config);
+      if(response.status == 200){
+          return response.data;
+      }
+  }catch(error){
+      return error;
   }
 }
 

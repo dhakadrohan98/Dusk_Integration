@@ -13,6 +13,8 @@ var orderExist = {
 };
 /* ---- Order ends --- */
 
+// click and collect store codes
+var cnc_stores = [33,194,94,7,153,178,64,152,2,148];
 
 /**
  * check if authcode is exist in cache then we will get from cache
@@ -169,6 +171,7 @@ function generatePayloadForOrderCreate(ecommerce_order_data, token)
     var orderItemData = [];
     var order = ecommerce_order_data;
     var payload = {};
+    var freightProvider = 'Standard';
 
     if (typeof order.extension_attributes.shipping_assignments[0].shipping.address == 'undefined') {
         return false;
@@ -194,7 +197,29 @@ function generatePayloadForOrderCreate(ecommerce_order_data, token)
     order_data.OrderBasedDiscount = "0";
     order_data.OrderBasedDiscountExcludingTax = "0";
     order_data.OrderTotal = "" + order.grand_total;
-    order_data.FreightProvider = "Standard";
+
+    // click and collect check
+    if (order.extension_attributes.shipping_assignments[0].shipping.method == 'amstorepickup_amstorepickup') {
+        freightProvider = 'Click and Collect';
+        var click_collect_store_id = false;
+        if (order.shipping_description != undefined) {
+            var shipping_description = order.shipping_description            
+            var [shippingdesc, cc_store_id] = shipping_description.split('|');
+            if(typeof cc_store_id != 'undefined'){
+                cc_store_id = cc_store_id.trim();
+                if (Number.isInteger(cc_store_id)) {
+                    order_data.CollectionStore = cc_store_id;
+                    click_collect_store_id = true;
+                }
+            }
+            
+        }
+        if (!click_collect_store_id) {
+            var randomIndex = Math.floor(Math.random() * cnc_stores.length);
+            order_data.CollectionStore = cnc_stores[randomIndex];
+        }
+    }
+    order_data.FreightProvider = freightProvider;
     order_data.Website = (order.order_currency_code == "AUD") ? 1 : 2;
     order_data.ExternalOrderSource = "Adobe Commerce";
     order_data.ExternalOrderID = "" + order.increment_id;
@@ -225,12 +250,17 @@ function generatePayloadForOrderCreate(ecommerce_order_data, token)
             var itemInfo = []
 
             // @todo - we have to add Product attribute value here
-            var shiptogether = 1
+            var shiptogether = 0
 
             if (
                 (typeof item.parent_item != 'undefined') && 
                 Object.keys(item.parent_item).length > 0 && 
                 item.parent_item.product_type == 'bundle') {
+
+                    if(item.parent_item.extension_attributes && item.parent_item.extension_attributes.bundle_ship_together){                        
+                        shiptogether = item.parent_item.extension_attributes.bundle_ship_together
+                    }
+                    
                     var discount_percent = item.parent_item.discount_percent
                     // For dynamic price
                     if(item.base_price > 0) {
@@ -396,44 +426,88 @@ function changeDateFormate(date) {
 }
 
 //ClickAndCollect functionality for multiple skus & multiple stores
-async function clickAndCollect(params,skuArray,storesArray){
-  var finalResponse = {};
-  
-  var storeIds = storesArray.join(',')
-
-  for(j=0; j<skuArray.length; j++) {
-    
-        var config = {
-          method: 'get',
-          url: params.VIARE_CLICK_COLLECT_URL+ skuArray[j]+'?stores=' +storeIds
-        };
-
-        var sku = skuArray[j];
-
-        try {
-          var response = await axios(config);
-    
-          if (response.status == 200) {
+async function clickAndCollect(params, skuArray, storesArray) {
+    var finalResponse = {};
+    var storeIds = storesArray.join(',');
+    var skuArrayLength = skuArray.length;
+    const requests = skuArray.map( (sku) => 
+          axios.get(params.VIARE_CLICK_COLLECT_URL+sku+"?stores="+storeIds)
+      );
+      //https://dusk.viare.io/api/availability/store/50209484?stores=100
+      try {
+        const response = await Promise.all(requests);
+        var k=0;
+        response.map((item) => {
+            var i=0;
             var tempArr=[];
-            for(k=0; k < response.data.length; k++) {
-              var branchVal =response.data[k].Branch;
-              var actualVal =response.data[k].Barcodes[0].Value;
-    
-              tempArr.push({"Branch": branchVal,"qty":actualVal});
+            while(i<item.data.length) {
+                var branchVal =item.data[i].Branch;
+                var actualVal =item.data[i].Barcodes[0].Value;
+                tempArr[i] = {"Branch": branchVal,"qty":actualVal};
+                i++;
             }
-            finalResponse[sku]=tempArr;
-            // final[sku[i].qty] = finalResponse[i].Barcodes[0].Value;
-          }
-        } catch (error) {
-            finalResponse[sku]={"error": error.message};
+                var sku = skuArray[k];
+                finalResponse[sku] = tempArr;
+                k++;
+           });            
+      } 
+      catch (error) {
+        finalResponse = error.message
       }
-    }
-    return finalResponse;
+      return finalResponse;
 }
+
+// async function clickAndCollect(params,skuArray,storesArray){
+//   var finalResponse = {};
+  
+//   var storeIds = storesArray.join(',')
+
+//   for(j=0; j<skuArray.length; j++) {
+    
+//         var config = {
+//           method: 'get',
+//           url: params.VIARE_CLICK_COLLECT_URL+ skuArray[j]+'?stores=' +storeIds
+//         };
+
+//         var sku = skuArray[j];
+
+//         try {
+//           var response = await axios(config);
+    
+//           if (response.status == 200) {
+//             var tempArr=[];
+//             for(k=0; k < response.data.length; k++) {
+//               var branchVal =response.data[k].Branch;
+//               var actualVal =response.data[k].Barcodes[0].Value;
+    
+//               tempArr.push({"Branch": branchVal,"qty":actualVal});
+//             }
+//             finalResponse[sku]=tempArr;
+//             // final[sku[i].qty] = finalResponse[i].Barcodes[0].Value;
+//           }
+//         } catch (error) {
+//             finalResponse[sku]={"error": error.message};
+//       }
+//     }
+//     return finalResponse;
+// }
 
 function calculatePercentage(amount, percentage)
 {
     return ((amount * percentage) / 100).toFixed(2);
+}
+
+function getDispatchBranchNumber(dispatchPoint)
+{
+    var dispatchBranchNumber = 0;
+    var [branchname, storeid] = dispatchPoint.split('|');
+    storeid = parseInt(storeid.trim());
+
+    if (Number.isInteger(storeid)) {
+        dispatchBranchNumber = storeid
+    }
+
+    return dispatchBranchNumber;
 }
 
 //noinspection JSAnnotator
@@ -446,5 +520,6 @@ module.exports = {
   geViaretOrderInfo,
   clickAndCollect,
   isOrderExist,
-  generatePayloadForOrderExist
+  generatePayloadForOrderExist,
+  getDispatchBranchNumber
 }

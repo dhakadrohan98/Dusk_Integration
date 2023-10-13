@@ -198,37 +198,53 @@ function getSkuListDataFromOrder(order)
     return skuList
 }
 
-//Generarting customer payload
-function customerDataPayload(params, customerData) {
-    var result = [ 
+//Generarting customer payload for updating customer purpose
+async function customerDataPayload(params, api_endpoint, giveXNumber, customerData) {
+
+    var customerAddress = "";
+    var telephoneNo= "";
+    // api_endpoint = "dc_941";
+    if(customerData.addresses.length > 0){
+        var length = customerData.addresses.length;
+        //Storing customer's city & telephone no. of billing address
+        for(i=0; i<length; i++) {
+            if(customerData.addresses[i].default_billing != undefined && 
+                customerData.addresses[i].default_billing==true) {
+                //if customer address is set as billing address then store street, city and region in customerAddress variable. 
+                customerAddress = customerData.addresses[i].street[0] +", "+ customerData.addresses[i].city+", "+customerData.addresses[i].region.region;
+                telephoneNo = customerData.addresses[i].telephone;
+            }
+        }
+    }
+    
+    return [ 
         params.GIVEX_LANGUAGECODE,
         generateTransactionCode(api_endpoint),
         params.GIVEX_USERID,
         params.GIVEX_PASSWORD,
         giveXNumber,
-        "member_title":
-        "member_fname":
-        "member_mname":
-        "member_lname":
-        "member_address":
-        "member_mobile":
-        "member_email":
-        "member_birthdate":
-        "sms_contact_answer":
-        "email_contact_answer":
-        "mail_contact_answer":
-        "member_phone":
-        "referring_member_number":
-        "security_code":
-        "member_type":
-        "member_status":
-        "member_type":
-        "member_delivery_method":
-        "customer_company":
-        "customer_pos_notes":
-        "comment":
+        '', //Member title 
+        customerData.firstname,
+        '', //Customer middlename 
+        customerData.lastname,
+        customerAddress,
+        telephoneNo,
+        customerData.email, //customerData.email 
+        customerData.dob, //Customer birthDate (DOB)
+        "", //SMS contact number (*optional)
+        "", //Email contact answer
+        "", //Mail contact answer
+        "", //member phone
+        "", //Referring member number
+        "", //Security code
+        "", //member_type
+        "", //member_status
+        "", //member_type
+        "", //member_delivery_method 
+        "", //customer_company
+        "", //customer_pos_notes
+        "", //comment
     ];
-    return result;
 }
 
 //noinspection JSAnnotator

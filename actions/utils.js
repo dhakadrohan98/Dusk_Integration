@@ -45,6 +45,89 @@ function getMissingKeys (obj, required) {
   })
 }
 
+
+function futuraDateFormat(futuraObj) {
+  // Iterate through the object
+  for (const key in futuraObj) {
+    if (futuraObj.hasOwnProperty(key)) {
+      //console.log("Key: " + key + ", Value: " + futuraObj[key]);
+      if(isValidDate(futuraObj[key])) {
+        futuraObj[key] = formatDateIso(futuraObj[key])
+      }
+    }
+  }
+  return futuraObj;
+}
+
+function isValidDate(dateString) {
+  var regEx = /^\d{4}-\d{2}-\d{2}/
+  //var regEx = /[a-zA-Z0-9]{4}-[a-zA-Z0-9]{2}-[a-zA-Z0-9]{2}/
+  //return regEx.test(dateString)
+  var d = new Date(dateString);
+  //return regEx.test(dateString)
+  var dNum = d.getTime();
+  if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+  var dateYmd = d.toISOString().slice(0,10);
+  var dateYm = d.toISOString().slice(0,8);
+  return dateYm != "1970-01-" && regEx.test(dateYmd)
+}
+
+// function isValidDate(dateString) {
+//   var regEx = /^\d{4}-\d{2}-\d{2}/;
+//   return regEx.test(dateString)
+//   var d = new Date(dateString);
+//   var dNum = d.getTime();
+//   if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+//   var dateYmd = d.toISOString().slice(0,10);
+//   return regEx.test(dateYmd)
+// }
+
+function formatDateIso(dateinput) {
+  var dateIso = new Date(dateinput)
+  return dateIso.toISOString();
+}
+
+/**
+ * Function to add object to array if key not found
+ * @param obj
+ * @param arr
+ * @returns {*}
+ */
+
+function addObjtoArray(obj, arr, keys) {
+  let found = false;
+  if (arr.length > 0) {
+    let obj1 = arr.find((o, i) => {
+      if (typeof o[keys] != "undefined" && typeof obj[keys] != "undefined" && o[keys] === obj[keys]) {
+        arr[i].qty += obj.qty;
+        found = true;
+        return true;
+      }
+  });
+  }
+  if (!found) {
+    arr.push(obj);
+  }
+  return arr;
+}
+/**
+ * Get date as Ymd string
+ * @param Isodate
+ * @returns {string}
+ */
+function getdateasstring(Isodate)
+{
+  var date = new Date(Isodate);
+  var year = date.toLocaleString("default", { year: "numeric" });
+  var month = date.toLocaleString("default", { month: "2-digit" });
+  var day = date.toLocaleString("default", { day: "2-digit" });
+
+  // Generate yyyy-mm-dd date string
+  var formattedDate = year + month + day;
+
+  return formattedDate
+}
+
 /**
  *
  * Returns the list of missing keys giving an object and its required keys.
@@ -132,6 +215,11 @@ function errorResponse (statusCode, message, logger) {
 module.exports = {
   errorResponse,
   getBearerToken,
+  isValidDate,
+  formatDateIso,
+  futuraDateFormat,
   stringParameters,
+  addObjtoArray,
+  getdateasstring,
   checkMissingRequestInputs
 }

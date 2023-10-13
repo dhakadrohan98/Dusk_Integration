@@ -1,5 +1,8 @@
 const soap = require('soap')
-
+const { Core } = require('@adobe/aio-sdk')
+const logger = Core.Logger('main', { level: 'info' })
+const { futuraDateFormat, formatDateIso } = require('./utils')
+const { async } = require('regenerator-runtime')
 var customer = {
     "web_kde_nummer": 0,
     "web_kde_typ": 3,
@@ -44,8 +47,8 @@ var commonfield = {
     "web_add_zahlart": 0,
     "web_add_zahlinttyp": 0,
     "web_add_zahlintcount": 0,
-    "web_add_last_rg_datum": "1899-12-29T18:38:50.000Z",
-    "web_add_last_pay_datum": "1899-12-29T18:38:50.000Z",
+    "web_add_last_rg_datum": "1899-12-30T00:00:00.000Z",
+    "web_add_last_pay_datum": "1899-12-30T00:00:00.000Z",
     "web_add_kundennummer": "",
     "web_add_bankname": "",
     "web_add_bankleitzahl": "",
@@ -53,19 +56,19 @@ var commonfield = {
     "web_add_bic": "",
     "web_add_iban": "",
     "web_add_kreditkarte": "",
-    "web_add_sperrdatum": "1899-12-29T18:38:50.000Z",
+    "web_add_sperrdatum": "1899-12-30T00:00:00.000Z",
     "web_add_sperrgrund": "",
-    "web_add_last_sammelrg_datum": "1899-12-29T18:38:50.000Z",
+    "web_add_last_sammelrg_datum": "1899-12-30T00:00:00.000Z",
     "web_add_manumahnung": 0,
     "web_add_status": 0,
-    "web_add_loesch_datum": "1899-12-29T18:38:50.000Z",
+    "web_add_loesch_datum": "1899-12-30T00:00:00.000Z",
     "web_add_inactive": 0,
     "web_add_bildname": "",
     "web_add_zahlziel": 0,
     "web_add_gutschrift": 0,
     "web_add_sprache": "",
-    "web_add_fibuexport_first": "1899-12-29T18:38:50.000Z",
-    "web_add_fibuexport_last": "1899-12-29T18:38:50.000Z",
+    "web_add_fibuexport_first": "1899-12-30T00:00:00.000Z",
+    "web_add_fibuexport_last": "1899-12-30T00:00:00.000Z",
     "web_add_vfw_bereich": 0,
     "web_add_rg_druckrabatt": 0,
     "web_add_rg_druckformat": 0,
@@ -75,24 +78,24 @@ var commonfield = {
     "web_add_werbung": 0,
     "web_add_master_typ": 0,
     "web_add_master_nummer": 0,
-    "web_add_karte_erfasst": "1899-12-29T18:38:50.000Z",
-    "web_add_karte_ausgegeben": "1899-12-29T18:38:50.000Z",
+    "web_add_karte_erfasst": "1899-12-30T00:00:00.000Z",
+    "web_add_karte_ausgegeben": "1899-12-30T00:00:00.000Z",
     "web_add_ohne_bonus": 0,
     "web_add_wf_status": 0,
     "web_add_wf_flags": 0,
     "web_add_wf_id": 0,
-    "web_add_wf_date_time_1": "1899-12-29T18:38:50.000Z",
-    "web_add_wf_date_time_2": "1899-12-29T18:38:50.000Z",
-    "web_add_wf_date_time_3": "1899-12-29T18:38:50.000Z",
-    "web_add_import_datum": "1899-12-29T18:38:50.000Z",
-    "web_add_export_datum": "1899-12-29T18:38:50.000Z",
-    "web_add_datum_user": "1899-12-29T18:38:50.000Z",
+    "web_add_wf_date_time_1": "1899-12-30T00:00:00.000Z",
+    "web_add_wf_date_time_2": "1899-12-30T00:00:00.000Z",
+    "web_add_wf_date_time_3": "1899-12-30T00:00:00.000Z",
+    "web_add_import_datum": "1899-12-30T00:00:00.000Z",
+    "web_add_export_datum": "1899-12-30T00:00:00.000Z",
+    "web_add_datum_user": "1899-12-30T00:00:00.000Z",
     "web_add_obild": "",
     "web_add_obild_ext": "",
     "web_add_clog_user": 0,
-    "web_add_clog_date_time": "1899-12-29T18:38:50.000Z",
+    "web_add_clog_date_time": "1899-12-30T00:00:00.000Z",
     "web_add_ulog_user": 0,
-    "web_add_ulog_date_time": "1899-12-29T18:38:50.000Z",
+    "web_add_ulog_date_time": "1899-12-30T00:00:00.000Z",
     "web_error": {
         "web_err_nr": 0,
         "web_err_txt": ""
@@ -119,7 +122,7 @@ var address = {
     "web_ans_titel": "",
     "web_ans_anrede": "",
     "web_ans_sachbearbeiter": "",
-    "web_ans_sachgeburtstag": "1899-12-29T18:38:50.000Z",
+    "web_ans_sachgeburtstag": "1899-12-30T00:00:00.000Z",
     "web_ans_telefon": "",
     "web_ans_telefon2": "",
     "web_ans_telefax": "",
@@ -149,10 +152,25 @@ var payloadOrderInfo = {
     }
 }
 
+var payloadForDeliveryNoteExist = {
+    "Table_name": "LIEFERKOPF",
+    "Limit": "20",
+    "Request_fields": [
+        {
+            "DB_request": {
+                "Field_name": "LFS_ANG_ANR",
+                "Field_value": "",
+            }
+        }
+    ],
+    "Response_fields": {
+        "string": ["LFS_ANG_ANR","LFS_LFS","LFS_DATLFS","LFS_TEXT"]
+    }
+}
 
-//Search customer through email
-async function SearchInFutura(params,email) {
-    var headers = getFuturaHeader(params)
+
+//creating payload for search in futura. 
+async function payloadForSearch(email) {
 
     var payload = {
         "web_search_kde": {
@@ -180,6 +198,13 @@ async function SearchInFutura(params,email) {
             }
         }
     }
+    return payload;
+}
+
+//Search customer through email
+async function SearchInFutura(params, payload, email) {
+    var headers = getFuturaHeader(params)
+
     return new Promise((resolve, reject) => {
         soap.createClient(params.FUTURA_CUSTOMER_API, {wsdl_headers: headers}, function(err, client) {
         if(err){
@@ -350,6 +375,32 @@ async function getAddressById(params, id){
 //update customer in futura
 async function UpdateCustomerInFututra(params, payload){
     var headers = getFuturaHeader(params)
+    // payload.customer = futuraDateFormat(payload.customer)
+    // payload.comon = futuraDateFormat(payload.comon)
+    // payload.address = futuraDateFormat(payload.address)
+
+    payload.address.web_ans_sachgeburtstag = formatDateIso(payload.address.web_ans_sachgeburtstag)
+
+
+    payload.comon.web_add_sperrdatum = formatDateIso(payload.comon.web_add_sperrdatum)
+    payload.comon.web_add_wf_date_time_1 = formatDateIso(payload.comon.web_add_wf_date_time_1)
+    payload.comon.web_add_ulog_date_time = formatDateIso(payload.comon.web_add_ulog_date_time)
+    payload.comon.web_add_wf_date_time_2 = formatDateIso(payload.comon.web_add_wf_date_time_2)
+    payload.comon.web_add_last_rg_datum = formatDateIso(payload.comon.web_add_last_rg_datum)
+    payload.comon.web_add_last_pay_datum = formatDateIso(payload.comon.web_add_last_pay_datum)
+    payload.comon.web_add_loesch_datum = formatDateIso(payload.comon.web_add_loesch_datum)
+    payload.comon.web_add_fibuexport_first = formatDateIso(payload.comon.web_add_fibuexport_first)
+    payload.comon.web_add_fibuexport_last = formatDateIso(payload.comon.web_add_fibuexport_last)
+    payload.comon.web_add_karte_erfasst = formatDateIso(payload.comon.web_add_karte_erfasst)
+    payload.comon.web_add_karte_ausgegeben = formatDateIso(payload.comon.web_add_karte_ausgegeben)
+    payload.comon.web_add_wf_date_time_3 = formatDateIso(payload.comon.web_add_wf_date_time_3)
+    payload.comon.web_add_import_datum = formatDateIso(payload.comon.web_add_import_datum)
+    payload.comon.web_add_export_datum = formatDateIso(payload.comon.web_add_export_datum)
+    payload.comon.web_add_datum_user = formatDateIso(payload.comon.web_add_datum_user)
+    payload.comon.web_add_clog_date_time = formatDateIso(payload.comon.web_add_clog_date_time)
+    payload.comon.web_add_ulog_date_time = formatDateIso(payload.comon.web_add_ulog_date_time)
+
+
 
     var updatedata = {
         'web_kde' : payload.customer,
@@ -439,10 +490,10 @@ async function isOrderExistonFutura(order_id, params, payloadOrderInfo) {
                 setOrderClient(params, client)
                 client.read_table(payloadOrderInfo, function(err, result) {
                     if(err){
-                        reject({'statusCode': 400, 'error': err})
+                        reject({'statusCode': 400, 'error': err, "lastcall": client.lastRequest})
                     }
                     else {
-                        resolve({'statusCode': 200, 'result': result})
+                        resolve({'statusCode': 200, 'result': result, "lastcall": client.lastRequest})
                     }
                 });
             } else {
@@ -478,10 +529,10 @@ function createOrder(apiEndpoint, header, payload, params) {
                 setOrderClient(params, client)
                 client.set_import_lines(payload, function(err, result) {
                     if(err){
-                        reject({'statusCode': 400, 'error': err})
+                        reject({'statusCode': 400, 'error': err, "lastcall": client.lastRequest})
                     }
                     else {
-                        resolve({'statusCode': 200, 'result': result})
+                        resolve({'statusCode': 200, 'result': result, "lastcall": client.lastRequest})
                     }
                 });
             } else {
@@ -493,15 +544,15 @@ function createOrder(apiEndpoint, header, payload, params) {
 }
 
 // Generate the payload for Order create
-function generatePayloadForFuturaFromEcomOrder(order, order_id, futura_customer_id, params) {
+function generatePayloadForFuturaFromEcomOrder(order, order_id, futura_customer_id, params, fulfilled = false) {
     var stringData = [];
 
     var order_comment = 'ONLINE ORDER '+order.increment_id; // Order Comment
     var order_payment_method = (order.payment.method) ? order.payment.method : 'Credit Card';
 
-    stringData.push(orderInfoForFututa(order, order_comment, order_payment_method, order_id, futura_customer_id, params));
+    stringData.push(orderInfoForFututa(order, order_comment, order_payment_method, order_id, futura_customer_id, params,fulfilled));
 
-    var order_items = getOrderItemInfoForFutura(order, order_id, futura_customer_id, params);
+    var order_items = getOrderItemInfoForFutura(order, order_id, futura_customer_id, params,fulfilled);
     order_items.forEach((item, index) => {
         stringData.push(item);
     });
@@ -517,7 +568,7 @@ function generatePayloadForFuturaFromEcomOrder(order, order_id, futura_customer_
 }
 
 // Generate Order Information for Futura
-function orderInfoForFututa(order, order_comment, order_payment_method, order_id, futura_customer_id, params)
+function orderInfoForFututa(order, order_comment, order_payment_method, order_id, futura_customer_id, params, fulfilled)
 {
     var order_info = [];
     order_info.push(13); // FUTURA_RECORD_TYPE
@@ -528,7 +579,12 @@ function orderInfoForFututa(order, order_comment, order_payment_method, order_id
     order_info.push(futuraFormatDate(order.created_at)); // Order Created Date
     order_info.push(1); // isVatCacl
     order_info.push('"' + order_comment + '"'); // Order Comment
-    order_info.push(''); // Order Comment
+    if(fulfilled == true){
+        order_info.push(1); // Order Comment    
+    }else{
+        order_info.push(''); // Order Comment
+    }
+    
     order_info.push(''); // Order Comment
     order_info.push(''); // Order Comment
     order_info.push(''); // Order Comment
@@ -558,7 +614,7 @@ function orderInfoForFututa(order, order_comment, order_payment_method, order_id
 }
 
 // Generate order item information for futura
-function getOrderItemInfoForFutura(order, order_id, futura_customer_id, params) {
+function getOrderItemInfoForFutura(order, order_id, futura_customer_id, params, fulfilled) {
     var all_items = [];
     var counter = 1;
 
@@ -578,17 +634,18 @@ function getOrderItemInfoForFutura(order, order_id, futura_customer_id, params) 
                 item.parent_item.product_type == 'bundle') {
                 // For dynamic price
                 if (item.base_price > 0) {
-                    // unitPrice = item.base_price
-                    unitPrice = item.row_total_incl_tax
+                    //unitPrice = item.row_total_incl_tax
+                    unitPrice = (typeof item.base_cost != 'undefined') ? item.base_cost : item.row_total_incl_tax
                     quantity = item.qty_ordered
                 } else { // For fixed price
-                    unitPrice = item.extension_attributes.bundle_option_price
+                    unitPrice = (typeof item.base_cost != 'undefined') ? item.base_cost : item.extension_attributes.bundle_option_price
                     //quantity = item.extension_attributes.bundle_option_qty
                     quantity = item.qty_ordered
                 }
                 itemBasePriceIncludingTax = unitPrice
             } else {
-                unitPrice = item.base_price
+                //unitPrice = item.base_price
+                unitPrice = (typeof item.base_cost != 'undefined') ? item.base_cost : item.base_price
                 quantity = item.qty_ordered
                 itemBasePriceIncludingTax = item.row_total_incl_tax
             }
@@ -619,7 +676,13 @@ function getOrderItemInfoForFutura(order, order_id, futura_customer_id, params) 
             order_item_info.push(counter); // COrder
             order_item_info.push((item.qty_invoiced > 0) ? item.qty_invoiced : 1); // Item Quantity Invoiced
             order_item_info.push((item.qty_invoiced > 0) ? item.qty_invoiced : 1); // Item Quantity Invoiced
-            order_item_info.push(''); //shippingCostPrice (default set 0)
+            if(fulfilled == true){
+                var qtypending = item.qty_invoiced - item.qty_shipped
+                order_item_info.push(qtypending); //shippingCostPrice (default set 0)
+            }else{
+                order_item_info.push(''); //shippingCostPrice (default set 0)    
+            }
+            
             order_item_info.push((item.product_type == 'giftcard') ? 0 : unitPrice) // row_total_incl_tax
             order_item_info.push((item.product_type == 'giftcard') ? 0 : itemPriceExcludingTax); // itemPriceExcludingTax 
             order_item_info.push((item.product_type == 'giftcard') ? 0 : itemPriceIncludingTax); // itemPriceExcludingTax 
@@ -632,26 +695,36 @@ function getOrderItemInfoForFutura(order, order_id, futura_customer_id, params) 
         }
     });
 
-    var order_shipping_info = [];
-    order_shipping_info.push(13); // FUTURA_RECORD_TYPE
-    order_shipping_info.push(2); // FUTURA_HEADER_PREFIX
-    order_shipping_info.push(order_id); // Magento Order ID
-    order_shipping_info.push(futura_customer_id); // Futura Customer ID
-    order_shipping_info.push(futuraFormatDate(order.created_at)); // Order Created Date
-    order_shipping_info.push(1); // IsVat Calculated
-    order_shipping_info.push(params.FUTURA_SHIPPING_SKU); // Shipping SKU // 50012848
-    order_shipping_info.push(counter); // Item Count (Total Items)
-    order_shipping_info.push(1); // Item Quantity Invoiced
-    order_shipping_info.push(1); // Item Quantity Invoiced
-    order_shipping_info.push(''); //
-    order_shipping_info.push('0.0000'); // shipping Cost Price
-    order_shipping_info.push((order.base_shipping_incl_tax - order.base_shipping_tax_amount)); // Order Shipping Amount Vk NettoPrice = ( orderShippingAmount - shipemntTaxAmount )
-    order_shipping_info.push(order.base_shipping_incl_tax); // base_shipping_amountt
-    order_shipping_info.push(3); // vkBruttoPrice | row_total - member_discount
-    order_shipping_info.push(''); //
-    order_shipping_info.push(''); //
-    order_shipping_info.push(''); //
-    all_items.push('' + order_shipping_info.join(','));
+    // Shipment line will be added only when order is not 'click and collect' order.
+    if(order.base_shipping_amount != 0){
+        // No -shipment | qty 1 
+        // 
+        var order_shipping_info = [];
+        order_shipping_info.push(13); // FUTURA_RECORD_TYPE
+        order_shipping_info.push(2); // FUTURA_HEADER_PREFIX
+        order_shipping_info.push(order_id); // Magento Order ID
+        order_shipping_info.push(futura_customer_id); // Futura Customer ID
+        order_shipping_info.push(futuraFormatDate(order.created_at)); // Order Created Date
+        order_shipping_info.push(1); // IsVat Calculated
+        order_shipping_info.push(params.FUTURA_SHIPPING_SKU); // Shipping SKU // 50012848
+        order_shipping_info.push(counter); // Item Count (Total Items)
+        order_shipping_info.push(1); // Item Quantity Invoiced
+        order_shipping_info.push(1); // Item Quantity Invoiced
+        if(fulfilled == true && order.base_shipping_captured - order.base_shipping_refunded == 0){
+            order_shipping_info.push(1); //
+        }else{
+            order_shipping_info.push(''); //
+        }
+
+        order_shipping_info.push('0.0000'); // shipping Cost Price
+        order_shipping_info.push((order.base_shipping_incl_tax - order.base_shipping_tax_amount)); // Order Shipping Amount Vk NettoPrice = ( orderShippingAmount - shipemntTaxAmount )
+        order_shipping_info.push(order.base_shipping_incl_tax); // base_shipping_amountt
+        order_shipping_info.push(3); // vkBruttoPrice | row_total - member_discount
+        order_shipping_info.push(''); //
+        order_shipping_info.push(''); //
+        order_shipping_info.push(''); //
+        all_items.push('' + order_shipping_info.join(','));
+    }
 
     return all_items;
 
@@ -780,114 +853,364 @@ function createDeliveryNote(params,payload) {
         setOrderClient(params,client)
 
         client.set_delivery_note(updatedata, function(err, result) {
-          if(err){
-            reject(err)
-          }else{
-            resolve(result)
-          }
+            if(err){
+                reject({"err": err, "lastcall": client.lastRequest})
+              }else{
+                resolve({"result": result, "lastcall": client.lastRequest})
+              }
         },{timeout: params.SOAP_TIMEOUT})
       })
     })
 }
 
-
-async function createdeliverynoteparam(params, orderinfo, shipmentinfo, futuraorderid, futuracustomerid){
+// This function will create the payload for the delivery note and reverse delivery note.
+async function createdeliverynoteparam(params, orderinfo, shipmentinfo, futuraorderid, futuracustomerid, shipment_id, creditmemoinfo = false, is_reverse = false){
+    
+    // It will provide available delivery note number. 
     var deleiveryno = await getNewdeliverynoteNo(params, futuraorderid)
-    var type1 = await gettype1items(orderinfo,futuraorderid,futuracustomerid, deleiveryno)
-    var type2 = await gettype2items(shipmentinfo,orderinfo, futuraorderid,futuracustomerid, deleiveryno)
+    var isHeaderForShipment = false;
+
+    // Classification and Assgned Store
+    // filiale will contain the store number and classification will contain the 1 or 2 (delivery or click and collect)
+    if( 
+        // It will run only for the postal charge normal/reverse delivery note
+        (typeof params.onlyshipmentcharge != "undefined" && params.onlyshipmentcharge == true ) && 
+        (is_reverse == false && creditmemoinfo == false)
+    ){
+        isHeaderForShipment = true;
+        var filiale = 999
+        var classification = (typeof shipmentinfo.extension_attributes.classification != 'undefined') ? shipmentinfo.extension_attributes.classification : 1
+    } else if(
+        // It will run only for the adjustment reverse delivery note
+        (typeof params.onlyshipmentcharge != "undefined" || params.onlyshipmentcharge == false ) && 
+        (typeof params.only_adjustment != "undefined" && params.only_adjustment == true) && 
+        (is_reverse != false && creditmemoinfo != false) && 
+        (typeof creditmemoinfo.items != 'undefined') && 
+        (typeof creditmemoinfo.items[0] != 'undefined') && 
+        (typeof creditmemoinfo.items[0].extension_attributes != 'undefined') && 
+        (typeof creditmemoinfo.items[0].extension_attributes.classification != 'undefined')
+    ) {
+        var filiale = 999
+        var classification = (typeof creditmemoinfo.items[0].extension_attributes.classification != 'undefined') ? creditmemoinfo.items[0].extension_attributes.classification : 1
+    } else {
+        // This else part will run for ordered/shipment/creditmemo items
+        if (
+            (shipmentinfo != 'undefined') && 
+            (shipmentinfo.extension_attributes) && 
+            ( typeof shipmentinfo.extension_attributes != 'undefined')
+        ) {
+            // IF - filiale will get information from shipment info
+            if(is_reverse == false && creditmemoinfo == false){
+                var filiale = (typeof shipmentinfo.extension_attributes.assigned_store != 'undefined') ? shipmentinfo.extension_attributes.assigned_store : 160
+                var classification = (typeof shipmentinfo.extension_attributes.classification != 'undefined') ? shipmentinfo.extension_attributes.classification : 1
+            } else if( // else - IF - filiale will get information from creditmemo item info
+                (typeof creditmemoinfo.items != 'undefined') &&
+                (typeof creditmemoinfo.items[0] != 'undefined') &&
+                (typeof creditmemoinfo.items[0].extension_attributes != 'undefined') &&
+                (typeof creditmemoinfo.items[0].extension_attributes.store != 'undefined')
+            ){
+                var filiale = creditmemoinfo.items[0].extension_attributes.store
+            } else if( // else - IF - classification will get information from creditmemo item info
+                (typeof creditmemoinfo.items != 'undefined') &&
+                (typeof creditmemoinfo.items[0] != 'undefined') &&
+                (typeof creditmemoinfo.items[0].extension_attributes != 'undefined') &&
+                (typeof creditmemoinfo.items[0].extension_attributes.classification != 'undefined')
+            ){
+                var classification = (typeof creditmemoinfo.items[0].extension_attributes.classification != 'undefined') ? creditmemoinfo.items[0].extension_attributes.classification : 1
+            } else {
+                var filiale = 160
+            }
+        } else {
+            var filiale = 160
+            var classification = 1
+        }
+    }
+    
+    // header of the normal/reverse delivery note
+    var type1 = await gettype1items(orderinfo,shipmentinfo,futuraorderid,futuracustomerid,
+        deleiveryno,shipment_id,creditmemoinfo,is_reverse,filiale,classification, isHeaderForShipment)
+    
+    // items information of the normal/reverse delivery note
+    var type2 = await gettype2items(shipmentinfo,orderinfo, futuraorderid,futuracustomerid, 
+        deleiveryno,creditmemoinfo, is_reverse,params,filiale,classification)
+
+    // billing and shipping information of the normal/reverse delivery note
     var type3 = await gettype3items(orderinfo,futuraorderid,futuracustomerid, deleiveryno);
 
     return {"typ_1":type1 , "typ_2": type2, "typ_3": type3}
 }
 
-function gettype1items(orderinfo,futuraorderid,futuracustomerid,deleiveryno){
+function gettype1items(orderinfo,shipmentinfo,futuraorderid,futuracustomerid,deleiveryno,shipment_id,creditmemoinfo,is_reverse,filiale,classification,isHeaderForShipment){
+
+    if(is_reverse == false && creditmemoinfo == false){
+        var increment_id = shipmentinfo.increment_id
+    } else {
+        var increment_id = creditmemoinfo.increment_id
+    }
+
+    if(isHeaderForShipment == true) {
+        var text_header = "ONLINE ORDER "+orderinfo.increment_id;
+    } else {
+        var text_header = "ONLINE ORDER "+orderinfo.increment_id+" | "+increment_id;
+    }
 
     return {
-      "Nummer": deleiveryno.Result,
-      "Empfaenger": futuracustomerid,
-      "Lieferscheindatum": datetoISO(orderinfo.created_at),
-      "Filiale": 998,
-      "Umst_flag": 1,
-      "Text": "MAGENTO ORDER "+orderinfo.increment_id,
-      "Auftrag": futuraorderid,
-      "Vertreter": 1,
-      "Waehrung": orderinfo.base_currency_code,
-      "Buchungsdatum": datetoISO(orderinfo.created_at),
-      "Lfs_notOK": 0
+      "Nummer": deleiveryno.Result, //  Delivery Note Number
+      "Empfaenger": futuracustomerid, // = Futura Customer Number
+      "Lieferscheindatum": datetoISO(orderinfo.created_at), //DN Date
+      "Filiale": filiale, //  Branch that serviced the order
+      "Umst_flag": 1, // GST applicable
+      "Text": text_header,
+      "Auftrag": futuraorderid, // Futura Order ID
+      "Vertreter": classification, // Order type (1=Delivery 2=Click and Collect)
+      "Waehrung": orderinfo.base_currency_code, // Currency
+      "Buchungsdatum": datetoISO(orderinfo.created_at), // Booking Date
+      "Lfs_notOK": 0 //  DNOK Status – 0=auto DNOK
     }
 }
 
+// Get Type 2 Item Data for the delivery note
+function gettype2items(shipmentinfo,orderinfo,futuraorderid,futuracustomerid,deleiveryno,creditmemoinfo,is_reverse,params,filiale,classification){
 
-function gettype2items(shipmentinfo,orderinfo,futuraorderid,futuracustomerid,deleiveryno){
+    // generated array of shipping and adjustment sku which will use below
+    var shipping_adjustment_skus = [params.FUTURA_ADJUSTMENT_SKU, params.FUTURA_SHIPPING_SKU]
+    // var onlyshipmentcharge = params.onlyshipmentcharge
+    // --- creditmemo | store info with qty
+    var filialeInfo = {}
 
+    if(
+        // This will run only when postal charge normal/reverse delivery note is generating
+        (typeof params.onlyshipmentcharge != "undefined") &&
+        (params.onlyshipmentcharge == true) &&
+        (is_reverse == true && creditmemoinfo != false) &&
+        (creditmemoinfo.base_shipping_amount > 0) && (creditmemoinfo.base_shipping_incl_tax > 0)
+    ) {
+        // Generating the shipping item so that it can be add in shipping & order data as item
+        var shippingitem = addShippingInfoInDeliveryNote(false, is_reverse, orderinfo, params, creditmemoinfo, filiale,classification)
+        
+        if(orderinfo.base_shipping_amount != 0){
+            orderinfo.items.push(shippingitem)
+        }
+        
+        shipmentinfo.items.push(shippingitem)
+        creditmemoinfo.items.push(shippingitem)
+    }
+    if(
+        // This will run only when adjustment charge normal/reverse delivery note is generating
+        ((typeof params.onlyshipmentcharge == "undefined") || (params.onlyshipmentcharge == false) ) &&
+        (typeof params.only_adjustment != "undefined") &&
+        (is_reverse == true && creditmemoinfo != false) &&
+        (creditmemoinfo.base_adjustment > 0)
+    ) {
+        // Generating the shipping item so that it can be add in shipping & order data as item
+        var shippingitem = addShippingInfoInDeliveryNote(false, is_reverse, orderinfo, params, creditmemoinfo, filiale,classification)
+        
+        if(orderinfo.base_shipping_amount != 0){
+            orderinfo.items.push(shippingitem)
+        }
+        
+        shipmentinfo.items.push(shippingitem)
+        creditmemoinfo.items.push(shippingitem)
+    }
+
+    if(
+        // It will executes only when shipment generated. Means only for the delivery note.
+        (typeof params.onlyshipmentcharge != "undefined") &&
+        (params.onlyshipmentcharge == true) &&
+        (is_reverse == false && shipmentinfo != false)
+    ) {
+        // if((is_reverse == false && shipmentinfo != false)) {
+        // Generating the shipping item so that it can be add in shipping & order data as item
+        var shippingitem = addShippingInfoInDeliveryNote(shipmentinfo, is_reverse, orderinfo, params, false)
+        
+        if(orderinfo.base_shipping_amount != 0){
+            orderinfo.items.push(shippingitem)
+        }
+        
+        shipmentinfo.items.push(shippingitem)
+    }
+
+    // If is_reverse is true then the reverse delivery note will be created with the store info
+    if(is_reverse == true && creditmemoinfo != false) {
+        creditmemoinfo.items.forEach((creditmemoitem, index) => {
+            // Adding filialeInfo (store)
+            if(creditmemoitem.extension_attributes && creditmemoitem.extension_attributes.store) {
+                var filiale_item = {
+                    "qty": creditmemoitem.qty,
+                    "store": creditmemoitem.extension_attributes.store
+                }
+                filialeInfo[creditmemoitem.order_item_id] = filiale_item
+            } else if(creditmemoitem.sku == params.FUTURA_SHIPPING_SKU) {
+                // adding filialeInfo (store) for Shipping SKU 
+                var filiale_item = {
+                    "qty": creditmemoitem.qty,
+                    // if((deleiveryno.Result == 1) &&  (is_reverse == false && shipmentinfo != false)) {
+                    "store": 999
+                }
+                filialeInfo[creditmemoitem.order_item_id] = filiale_item
+            }
+        });
+    }
 
     shipmentitems = {}
 
-    shipmentinfo.items.forEach((shipitems, index) => {
-
-        var shipmentitem = {
-            "qty": shipitems.qty,
-            "sku": shipitems.sku
-        }
-
-        shipmentitems[shipitems.order_item_id] = shipmentitem
-    });
+    if(is_reverse == true && creditmemoinfo != false) {
+        // Generating creditmemo information
+        creditmemoinfo.items.forEach((creditmemo_item, index) => {
+            var shipmentitem = {
+                "qty": creditmemo_item.qty,
+                "sku": creditmemo_item.sku,
+            }
+            // reusing the existing varible
+            shipmentitems[creditmemo_item.order_item_id] = shipmentitem
+        });
+    } else {
+        // Generating shipment information
+        shipmentinfo.items.forEach((shipitems, index) => {
+            var shipmentitem = {
+                "qty": shipitems.qty,
+                "sku": shipitems.sku
+            }
+            shipmentitems[shipitems.order_item_id] = shipmentitem
+        });
+    }
 
     var shippinginfo = [];
     var counter = 1;
-    orderinfo.items.forEach((item, index) => {
-        if(item.product_type == "simple" || item.is_virtual == true){
-            var unitPrice = 0;
-            if (
-                (typeof item.parent_item != 'undefined') && 
-                Object.keys(item.parent_item).length > 0 && 
-                item.parent_item.product_type == 'bundle') {
-                    // For dynamic price
-                    if(item.base_price > 0) {
-                        unitPrice = item.base_price
-                    } else { // For fixed price
-                        unitPrice = item.extension_attributes.bundle_option_price
+    var deliver_note_item_pos = 1;
+    var itemsArray = []
+
+    try {
+        orderinfo.items.forEach((item, index) => {
+            // Now only those order item will be process which has reversal and quantity_reverse value.
+            if(item.product_type == "simple" || item.is_virtual == true){
+                var unitPrice = 0;
+                if (
+                    (typeof item.parent_item != 'undefined') && 
+                    Object.keys(item.parent_item).length > 0 && 
+                    item.parent_item.product_type == 'bundle') {
+                        // For dynamic price
+                        if(item.base_price > 0) {
+                            unitPrice = item.base_price
+                        } else { // For fixed price
+                            unitPrice = item.extension_attributes.bundle_option_price
+                        }
+    
+                } else {
+                    unitPrice = item.base_price
+                }
+
+                if(
+                    ((is_reverse != true) && shipmentitems[item.item_id]) ||
+                    (
+                        shipmentitems[item.item_id] &&
+                        (is_reverse == true) &&
+                        typeof (item.reversal) != 'undefined' &&
+                        (item.reversal == true) &&
+                        typeof (item.quantity_reverse) != 'undefined' &&
+                        (item.quantity_reverse > 0)
+                    )
+                ){
+                    itemsArray.push(item.item_id)
+    
+                    // Filiale info
+                    if((is_reverse == true) && (Object.keys(filialeInfo).length > 0) && filialeInfo[item.item_id].store ) {
+                        var filialeval = filialeInfo[item.item_id].store;
+                    } else {
+                        var filialeval = filiale
+                    }
+    
+                    // Menge and Berechnet info
+                    if((is_reverse == true) && (Object.keys(filialeInfo).length > 0) && filialeInfo[item.item_id].qty )
+                    {
+                        // var menge = filialeInfo[item.item_id].qty * -1;
+                        // var berechnet = filialeInfo[item.item_id].qty * -1;
+                        var menge = item.quantity_reverse * -1;
+                        var berechnet = item.quantity_reverse * -1;
+                    } else {
+                        var menge = shipmentitems[item.item_id].qty;
+                        var berechnet = shipmentitems[item.item_id].qty;
                     }
 
-            } else {
-                unitPrice = item.base_price
+                    if(typeof params.only_adjustment != "undefined" && params.only_adjustment == true )
+                    {
+                        var auf_pos = 0
+                    } else {
+                        var auf_pos =  (item.sku == params.FUTURA_SHIPPING_SKU) ? orderinfo.items.length : counter
+                    }
+    
+                    var qty_invoiced = (item.qty_invoiced == 0 ) ? 1 : item.qty_invoiced; 
+                    var itemPriceIncludingTax = (item.base_row_total_incl_tax / qty_invoiced)
+                    // excluding = ( base_row_total_incl_tax - base_tax_invoiced ) / qty_invoiced
+                    if(
+                        (typeof params.only_adjustment != "undefined") &&
+                        (item.sku == params.FUTURA_ADJUSTMENT_SKU) && 
+                        (typeof item.delivery_note_type != 'undefined') &&
+                        (item.delivery_note_type == 'adjustment')
+                    ){
+                        var itemPriceExcludingTax = item.base_row_total_incl_tax;
+                    } else {
+                        var itemPriceExcludingTax = ( item.base_row_total_incl_tax - item.base_tax_invoiced ) / qty_invoiced;
+                    }
+                    
+                    var order_shipping_info = {
+                        "Nummer": deleiveryno.Result, // Delivery Note Number
+                        "Empfaenger": futuracustomerid, // Futura customer ID
+                        "Lieferdatum": datetoISO(item.created_at), // created at date
+                        "Filiale": filialeval, // # modified for reverse delivery-note // store number
+                        "Auftrag": futuraorderid, // Futura ORder ID
+                        "Umst_flag": 1,
+                        "Hostid": item.sku, // Product SKU
+                        "Lfs_pos": deliver_note_item_pos, // Delivery note item position
+                        "Auf_pos": auf_pos, // Item's position in Futura Order
+                        "Menge": menge, // If reverse delivery note is creating
+                        "Berechnet": berechnet, // then value will be in negative
+                        "Ek": unitPrice,
+                        "Vk_netto": itemPriceExcludingTax,
+                        "Vk_brutto": itemPriceIncludingTax,
+                        "Umsatzsteuerschluessel": 3
+                    };
+                    
+
+                    // Only for the postal charge
+                    if(typeof params.onlyshipmentcharge != "undefined"){
+                        if(
+                            (item.sku == params.FUTURA_SHIPPING_SKU) && 
+                            (typeof item.delivery_note_type != 'undefined') &&
+                            (item.delivery_note_type == 'shipping')
+                        ){
+                            shippinginfo.push(order_shipping_info);
+                        }
+                    } else if(typeof params.only_adjustment != "undefined"){
+                        // Only for the adjustment amount 
+                        if(
+                            (item.sku == params.FUTURA_ADJUSTMENT_SKU) && 
+                            (typeof item.delivery_note_type != 'undefined') &&
+                            (item.delivery_note_type == 'adjustment')
+                        ){
+                            shippinginfo.push(order_shipping_info);
+                        }
+                    } else {
+                        // For all the items available in the order/shipment/creditmemo
+                        if (!shipping_adjustment_skus.includes(item.sku)) {
+                            shippinginfo.push(order_shipping_info);
+                        }
+                    }
+                    deliver_note_item_pos++;
+                }
             }
 
-
-            if(shipmentitems[item.item_id]){
-                var qty_invoiced = (item.qty_invoiced == 0 ) ? 1 : item.qty_invoiced; 
-                var itemPriceIncludingTax = (item.base_row_total_incl_tax / qty_invoiced)
-                // excluding = ( base_row_total_incl_tax - base_tax_invoiced ) / qty_invoiced
-                var itemPriceExcludingTax = ( item.base_row_total_incl_tax - item.base_tax_invoiced ) / qty_invoiced;
-                var order_shipping_info = {
-                  "Nummer": deleiveryno.Result,
-                  "Empfaenger": futuracustomerid,
-                  "Lieferdatum": datetoISO(item.created_at),
-                  "Filiale": 998,
-                  "Auftrag": futuraorderid,
-                  "Umst_flag": 1,
-                  "Hostid": item.sku,
-                  "Lfs_pos": counter,
-                  "Auf_pos": 0,
-                  "Menge": item.qty_shipped,
-                  "Berechnet": qty_invoiced,
-                  "Ek": unitPrice,
-                  "Vk_netto": itemPriceExcludingTax,
-                  "Vk_brutto": itemPriceIncludingTax,
-                  "Umsatzsteuerschluessel": 3
-                };
-
-                counter++
-
-                shippinginfo.push(order_shipping_info);
-            }
-        }
-
-
-            
-    });
+            counter++;
+        });
+        
+    } catch (error) {
+        shippingitem = error.message
+    }
+    
 
     return {"Delivery_typ_2": shippinginfo}
+    //return {"Delivery_typ_2": [shippingitem, filialeInfo], "itemsArray": itemsArray}
+
 }
 
 function gettype3items(orderinfo,futuraorderid,futuracustomerid,deleiveryno){
@@ -966,6 +1289,194 @@ function datetoISO(datetime){
     return ISOdate
 }
 
+function addShippingInfoInDeliveryNote(shipment, is_reverse, order, params, creditmemoinfo)
+{
+    var base_price_incl_tax = 0;
+    var base_row_total_incl_tax = 0;
+    var base_tax_invoiced = 0;
+    var created_at = '';
+
+    if(
+        is_reverse == true && 
+        (typeof params.only_adjustment == "undefined") &&
+        (typeof params.onlyshipmentcharge != "undefined")
+    ) {
+        base_price_incl_tax = (creditmemoinfo.shipping_incl_tax)
+        base_row_total_incl_tax = (creditmemoinfo.base_shipping_incl_tax)
+        base_tax_invoiced = (creditmemoinfo.base_shipping_tax_amount)
+        created_at = creditmemoinfo.created_at
+    } else if(
+        is_reverse == true && 
+        (typeof params.only_adjustment != "undefined") && 
+        (params.only_adjustment == true) 
+    ) {
+        base_price_incl_tax = (creditmemoinfo.base_adjustment)
+        base_row_total_incl_tax = (creditmemoinfo.base_adjustment)
+        base_tax_invoiced = (creditmemoinfo.base_adjustment)
+        created_at = creditmemoinfo.created_at
+    } else {
+        base_price_incl_tax = (order.base_shipping_incl_tax)
+        base_row_total_incl_tax = (order.base_shipping_incl_tax)
+        base_tax_invoiced = (order.base_shipping_tax_amount)
+        created_at = shipment.created_at
+    }
+
+    var shippingitem = {
+        'qty': 1,
+        'sku': (params.only_adjustment == true) ? params.FUTURA_ADJUSTMENT_SKU : params.FUTURA_SHIPPING_SKU,
+        'base_price': 0,
+        'base_price_incl_tax': base_price_incl_tax,
+        'item_id': 0,
+        'base_row_total_incl_tax': base_row_total_incl_tax,
+        'base_tax_invoiced': base_tax_invoiced,
+        'qty_invoiced': 1,
+        'created_at': created_at,
+        'order_item_id': 0,
+        'product_type': 'simple',
+        'delivery_note_type': (params.only_adjustment == true) ? 'adjustment' : 'shipping',
+        'quantity_reverse': 1,
+        'reversal': true
+    }
+
+    return shippingitem
+}
+
+function deliveryExistPayload(order_id)
+{
+    payloadForDeliveryNoteExist.Request_fields[0].DB_request.Field_value = order_id;
+    return payloadForDeliveryNoteExist
+}
+
+async function isDeliveryNoteExist(params, payload)
+{
+    var apiEndpoint = params.FUTURA_ORDER_API+'?service=FuturaERS_HOST';
+    var futura_headers = getFuturaHeader(params);
+
+    return new Promise((resolve, reject)=> {
+        soap.createClient(apiEndpoint, {wsdl_headers:futura_headers, escapeXML: false}, function(err, client) {
+
+            if(err) {
+                reject({'statusCode': 502, 'error': {"message": "Futura Delivery Note Exist Check | Not able to connect "+apiEndpoint, "errorCode": error.code}})
+            }
+
+            if (client) {
+                setOrderClient(params, client)
+                client.read_table(payload, function(err, result) {
+                    if(err){
+                        reject({'statusCode': 400, 'error': err, "lastcall": client.lastRequest})
+                    }
+                    else {
+                        resolve({'statusCode': 200, 'result': result, "lastcall": client.lastRequest})
+                    }
+                });
+            } else {
+                reject({'statusCode': 404, 'error': 'read_table method not found.'});
+            }
+
+        })
+    })
+}
+
+function getShipmentIncrementNumber(deliverynote_text)
+{
+    var [ordertext, shipment_id] = deliverynote_text.split('|');
+    shipment_id = shipment_id.trim();
+    return shipment_id;
+}
+
+function getCreditMemoItemsInfo(creditmemo){
+    var item_data = [];
+    creditmemo.items.forEach((item, index) => {
+        console.log("Item: ", item)
+        item_data[item.order_item_id] = {
+            "qty": item.qty
+        }
+    });
+
+    return item_data;
+}
+
+function getRmaItemsInfo(rma_data){
+    var item_data = [];
+    var rma_items = rma_data.items;
+    rma_items.forEach((rmaorder, index) => {
+        rmaorder.items.forEach((item, itemindex) => {
+            item_data[item.order_item_id] = {
+                "qty_requested": item.qty_requested,
+                "qty_authorized": item.qty_authorized,
+                "qty_approved": item.qty_approved,
+                "qty_returned": item.qty_returned,
+                "rma_status": rmaorder.status
+            }
+        });
+    });
+
+    return item_data;
+}
+
+function setOrderItemIsReadyForReversal(order, creditmemo, rma_data)
+{
+    try{
+        var creditmemo_data = {};
+        creditmemo.items.forEach((item, index) => {
+            creditmemo_data[item.order_item_id] = {
+                "qty": item.qty
+            }
+        });
+
+        if(rma_data.total_count > 0) {
+            var rma_items_data = {};
+            var rma_items = rma_data.items;
+            rma_items.forEach((rmaorder, index) => {
+                rmaorder.items.forEach((item, itemindex) => {
+                    rma_items_data[item.order_item_id] = {
+                        "qty_requested": item.qty_requested,
+                        "qty_authorized": item.qty_authorized,
+                        "qty_approved": item.qty_approved,
+                        "qty_returned": item.qty_returned,
+                        "rma_status": rmaorder.status
+                    }
+                });
+            });
+        } else {
+            var rma_items_data = {};
+        }
+
+        order.items.forEach((item, index) => {
+            var reversal = false;
+            var quantityReverse = 0;
+            var pendingShipmentQty = item.qty_invoiced - item.qty_shipped;
+            if (item.qty_shipped > 0) {
+                if(item.qty_shipped === item.qty_invoiced){
+                    reversal = true;
+                    quantityReverse = creditmemo_data[item.item_id].qty;
+                } else {
+                    if(typeof rma_items_data[item.item_id] != 'undefined' && rma_items_data[item.item_id]){
+                        if (rma_items_data[item.item_id].qty_returned >= creditmemo_data[item.item_id].qty) {
+                            reversal = true;
+                            quantityReverse = creditmemo_data[item.item_id].qty;
+                        } else {
+                            // You might want to handle this case differently
+                        }
+                    } else {
+                        quantityReverse = (creditmemo_data[item.item_id].qty - pendingShipmentQty > 0) ? (creditmemo_data[item.item_id].qty - pendingShipmentQty) : 0;
+                        reversal = false;
+                    }
+                }
+            }
+
+            order.items[index]['reversal'] = reversal;
+            order.items[index]['quantity_reverse'] = quantityReverse;
+        });
+    } catch (error) {
+        // return error.message;
+        return {'message': error.message, 'status': false};
+    }
+    
+
+    return {'order': order, 'status': true};
+}
+
 
 //noinspection JSAnnotator
 module.exports = {
@@ -982,5 +1493,11 @@ module.exports = {
     payloadForExistingOrderCheck,
     createDeliveryNote,
     createdeliverynoteparam,
-    getCommonById
+    getCommonById,
+    isDeliveryNoteExist,
+    deliveryExistPayload,
+    getShipmentIncrementNumber,
+    getNewdeliverynoteNo,
+    payloadForSearch,
+    setOrderItemIsReadyForReversal
 }

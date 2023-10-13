@@ -19,16 +19,16 @@ const { Core } = require('@adobe/aio-sdk')
 const { errorResponse, getBearerToken, stringParameters, checkMissingRequestInputs } = require('../utils')
 const { payloadForRegisterCard, payloadForReversalRequest, payloadForGiftCardBalance, call } = require('../givex')
 const xmlrpc = require("davexmlrpc");
-// main function that will be executed by Adobe I/O Runtime
+// Main function that will be executed by Adobe I/O Runtime
 async function main(params) {
-  // create a Logger
+  // Create a Logger
   const logger = Core.Logger('main', { level: params.LOG_LEVEL || 'info' })
 
   try {
+    let responseData = {};  // To store response for Logging module
+    var balance_result = {}; // To store response for API
 
-    let responseData = {};
-    var balance_result = {};
-
+    // setting data in responseData from payload to this action
     responseData["event_code"] = params.type;
     responseData["provider_id"] = params.source;
     responseData["event_id"] = params.event_id;
@@ -52,20 +52,31 @@ async function main(params) {
     // extract the user Bearer token from the Authorization header
     const token = getBearerToken(params)
 
+    // Check if we have data in params with amount and card number and we have card number having some positive value
     if ((params.data) && (params.data.value) && (params.data.value.cardno)) {
+
+      // Since parameters are correct, prepare response for this api with the details
+
       try {
         var givex_number = params.data.value.cardno
+
+        // Generating Payload for GiftCard Balance Action of Givex (dc_995)
         var balancePayload = payloadForGiftCardBalance(params, givex_number)
+
+        // Execute the givex API with generated payload for Gift Card Balance.
         var balanceResult = await call(params, 'dc_995', balancePayload)
         
         var result = {}
-        var balance_response = {}
+        var balance_response = {} // To store API response for logging module
         
-
+        // Setting response for logging module
         balance_response['request'] = balancePayload
         balance_response['action'] = 'Fetching the Gift Card Balance'
-
+        
+        // API response check like if executed successfully with status 0 (true)
         if ((balanceResult.length > 0) && (balanceResult[1] == 0)) {
+          
+          // Set response if if API executed successfully
           result = {
             "transactionCode": balanceResult[0],
             "responseCode": balanceResult[1],
@@ -85,12 +96,14 @@ async function main(params) {
           balance_result['currency_code'] = balanceResult[3];
 
         } else {
+          // set result with error and details if API is a failure
           result = {
             "transactionCode": balanceResult[0],
             "responseCode": balanceResult[1],
             "errorMessage": balanceResult[2]
           };
-
+          
+          // Set response if API respond as a fialure
           balance_response['status'] = false
           balance_response['response'] = result
           balance_result['balance'] = 0;
@@ -98,34 +111,39 @@ async function main(params) {
           balance_result['response_code'] = balanceResult[1];
           balance_result['error_message'] = balanceResult[2];
         }
-
+        
+        // Set response data to be sent to Logging module
         responseData['givex_giftcard_balance'] = balance_response
 
       } catch (error) {
-        const errorResponse = {
-          statusCode: 200,
-          body: error
 
+        // setting error response for the API with status code
+        const errorResponse = {
+          statusCode: 400,
+          body: error
         }
+
+        // returning error response for the API
         return errorResponse
       }
 
     }
 
-
+    // setting response for the API with status code
     const response = {
       statusCode: 200,
       body: balance_result
-
     }
 
-    // log the response status code
+    // Log the response status code
     logger.info(`${response.statusCode}: successful request`)
+
+    // returning response for the API
     return response
   } catch (error) {
-    // log any server errors
+    // Log any server errors
     logger.error(error)
-    // return with 500
+    // Return with 500 status code
     return errorResponse(500, 'server error '+error, logger)
   }
 }

@@ -141,7 +141,7 @@ async function SendProductRequest(authtoken, params, productparam, apiEndpoint, 
       "ProductInformation": [
         {
           "NameValuePair": {
-            "Name": "PackagingInstruction",
+            "Name": "PackingInstructions",
             "Value": productparam.erp_value_added_services ? productparam.erp_value_added_services : ""
           }
         }
